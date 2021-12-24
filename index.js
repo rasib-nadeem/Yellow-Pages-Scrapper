@@ -30,12 +30,12 @@ const YellowPages = async () => {
   //entering the values in the text fields
 
   const Search = "Plumber";
-  const Location = "Australia";
+  const Location = "London";
 
   await page.waitForSelector("input[name=what]");
   await page.$eval("input[name=what]", (el) => (el.value = "Plumber"));
   await page.waitForSelector("input[name=where]");
-  await page.$eval("input[name=where]", (el) => (el.value = "Australia"));
+  await page.$eval("input[name=where]", (el) => (el.value = "London"));
   await page.evaluate(() => {
     let button = document.getElementsByClassName(
       "search-form__button jsBtnSearchForm "
@@ -53,8 +53,24 @@ const YellowPages = async () => {
   let allData = [];
   let numbers = [];
 
+  const [coun] = await page.$x(
+    "/html/body/div[2]/div[2]/div/div[1]/div[1]/h1/span"
+  );
+
+  const [num] = await page.$x(
+    "/html/body/div[2]/div[2]/div/div[1]/div[7]/div[2]/span/span[2]"
+  );
+
+  let total_records = await page.evaluate((name) => name.innerText, coun);
+  total_records = parseInt(total_records.split(" ")[1].split("(")[1]);
+
+  let number_of_pages = await page.evaluate((name) => name.innerText, num);
+  number_of_pages = parseInt(number_of_pages);
+
+  const loopCount = Math.ceil(total_records / number_of_pages);
+
   do {
-    for (let i = 1; i <= 100; i++) {
+    for (let i = 1; i <= loopCount; i++) {
       let obj = [];
       obj[0] = allData.length + 1;
       const [element] = await page.$x(
