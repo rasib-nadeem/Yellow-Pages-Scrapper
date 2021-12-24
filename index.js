@@ -10,7 +10,7 @@ const exportExcel = (data, workSheetColumnNames, workSheetName, filePath) => {
   xlsx.writeFile(workBook, path.resolve(filePath));
 };
 
-const YellowPages = async () => {
+const YellowPages = async (Search = "", Location = "") => {
   const browser = await puppeteer.launch({
     headless: false,
     args: [`--window-size=1440,800`],
@@ -27,15 +27,12 @@ const YellowPages = async () => {
     timeout: 0,
   });
 
-  //entering the values in the text fields
+  await page.focus("#whatwho");
+  await page.keyboard.type(Search);
 
-  const Search = "Plumber";
-  const Location = "London";
+  await page.focus("#where");
+  await page.keyboard.type(Location);
 
-  await page.waitForSelector("input[name=what]");
-  await page.$eval("input[name=what]", (el) => (el.value = "Plumber"));
-  await page.waitForSelector("input[name=where]");
-  await page.$eval("input[name=where]", (el) => (el.value = "London"));
   await page.evaluate(() => {
     let button = document.getElementsByClassName(
       "search-form__button jsBtnSearchForm "
@@ -174,4 +171,4 @@ const YellowPages = async () => {
   await browser.close();
 };
 
-YellowPages();
+YellowPages("Plumber", "London");
